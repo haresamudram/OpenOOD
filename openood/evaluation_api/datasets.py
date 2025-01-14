@@ -285,7 +285,7 @@ DATA_INFO = {
                 }
             },
             'far': {
-                'datasets': ['inaturalist', 'textures', 'openimage_o'],
+                'datasets': ['inaturalist', 'textures', 'openimage_o', 'sun', 'places365'],
                 'inaturalist': {
                     'data_dir':
                     'images_largescale/',
@@ -296,6 +296,18 @@ DATA_INFO = {
                     'data_dir': 'images_classic/',
                     'imglist_path':
                     'benchmark_imglist/imagenet/test_textures.txt'
+                },
+                'sun': {
+                    'data_dir':
+                    'images_largescale/',
+                    'imglist_path':
+                    'benchmark_imglist/imagenet/test_sun.txt'
+                },
+                'places365': {
+                    'data_dir':
+                    'images_largescale/',
+                    'imglist_path':
+                    'benchmark_imglist/imagenet/test_places365.txt'
                 },
                 'openimage_o': {
                     'data_dir':

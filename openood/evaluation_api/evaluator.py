@@ -32,6 +32,7 @@ class Evaluator:
         batch_size: int = 200,
         shuffle: bool = False,
         num_workers: int = 4,
+        text_features= None
     ) -> None:
         """A unified, easy-to-use API for evaluating (most) discriminative OOD
         detection methods.
@@ -120,6 +121,7 @@ class Evaluator:
         # postprocessor setup
         postprocessor.setup(net, dataloader_dict['id'], dataloader_dict['ood'])
 
+        self.postprocessor_name = postprocessor_name
         self.id_name = id_name
         self.net = net
         self.preprocessor = preprocessor
@@ -175,7 +177,8 @@ class Evaluator:
         with torch.no_grad():
             for batch in tqdm(data_loader, desc=msg, disable=not progress):
                 data = batch['data'].cuda()
-                logits = self.net(data)
+                try :logits, _ = self.net(data)
+                except : logits = self.net(data)  
                 preds = logits.argmax(1)
                 all_preds.append(preds.cpu())
                 all_labels.append(batch['label'])
