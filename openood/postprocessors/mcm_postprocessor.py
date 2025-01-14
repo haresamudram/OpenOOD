@@ -16,7 +16,8 @@ class MCMPostprocessor(BasePostprocessor):
 
     @torch.no_grad()
     def postprocess(self, net: nn.Module, data: Any):
-        output = net(data)
+        try: output, _ = net(data)
+        except: output = net(data)
         score = torch.softmax(output / self.tau, dim=1)
         conf, pred = torch.max(score, dim=1)
         return pred, conf
