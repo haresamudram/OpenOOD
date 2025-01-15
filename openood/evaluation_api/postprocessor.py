@@ -15,7 +15,8 @@ from openood.postprocessors import (
     VIMPostprocessor, RotPredPostprocessor, RankFeatPostprocessor,
     RMDSPostprocessor, SHEPostprocessor, CIDERPostprocessor, NPOSPostprocessor,
     GENPostprocessor, NNGuidePostprocessor, RelationPostprocessor,
-    T2FNormPostprocessor, ReweightOODPostprocessor, fDBDPostprocessor, MCMPostprocessor, GLMCMPostprocessor)
+    T2FNormPostprocessor, ReweightOODPostprocessor, fDBDPostprocessor, 
+    MCMPostprocessor, GLMCMPostprocessor, LSNPostprocessor)
 from openood.utils.config import Config, merge_configs
 
 postprocessors = {
@@ -65,7 +66,8 @@ postprocessors = {
     't2fnorm': T2FNormPostprocessor,
     'reweightood': ReweightOODPostprocessor,
     'mcm': MCMPostprocessor,
-    'glmcm': GLMCMPostprocessor
+    'glmcm': GLMCMPostprocessor,
+    'lsn_mcm':LSNPostprocessor
 }
 
 link_prefix = 'https://raw.githubusercontent.com/Jingkang50/OpenOOD/main/configs/postprocessors/'

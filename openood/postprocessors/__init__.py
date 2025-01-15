@@ -45,3 +45,4 @@ from .relation_postprocessor import RelationPostprocessor
 from .t2fnorm_postprocessor import T2FNormPostprocessor
 from .reweightood_postprocessor import ReweightOODPostprocessor
 from .glmcm_postprocessor import GLMCMPostprocessor
+from .lsn_mcm import LSNPostprocessor
