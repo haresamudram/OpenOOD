@@ -20,6 +20,7 @@ class GLMCMPostprocessor(BasePostprocessor):
         global_score = torch.softmax(global_features / self.tau, dim=-1)
         global_conf, pred = torch.max(global_score, dim=1)
         
+        if len(local_features.shape) > 3: local_features = local_features.mean(dim=-1) # Local features of GalLoP
         local_score = torch.softmax(local_features / self.tau, dim=-1)
         max_values, _ = torch.max(local_score, dim=2)
         local_conf, _ = torch.max(max_values, dim=1)
