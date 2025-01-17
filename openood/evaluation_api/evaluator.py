@@ -17,7 +17,7 @@ from openood.networks.scale_net import ScaleNet
 from .datasets import DATA_INFO, data_setup, get_id_ood_dataloader
 from .postprocessor import get_postprocessor
 from .preprocessor import get_default_preprocessor
-
+import openood.gallop.vlprompt.tools as vlp_tools
 
 class Evaluator:
     def __init__(
@@ -32,7 +32,8 @@ class Evaluator:
         batch_size: int = 200,
         shuffle: bool = False,
         num_workers: int = 4,
-        text_features= None
+        text_features= None, 
+        model = None,
     ) -> None:
         """A unified, easy-to-use API for evaluating (most) discriminative OOD
         detection methods.
@@ -127,6 +128,7 @@ class Evaluator:
         self.preprocessor = preprocessor
         self.postprocessor = postprocessor
         self.dataloader_dict = dataloader_dict
+        self.model = model
         self.metrics = {
             'id_acc': None,
             'csid_acc': None,
@@ -177,8 +179,13 @@ class Evaluator:
         with torch.no_grad():
             for batch in tqdm(data_loader, desc=msg, disable=not progress):
                 data = batch['data'].cuda()
-                try :logits, _ = self.net(data)
+                try :logits, local_logits = self.net(data)
                 except : logits = self.net(data)  
+                if self.model == 'GalLoP':
+                    local_logits_ = vlp_tools.topk_reduce(local_logits, topk=self.net.topk)
+                    local_logits_ = local_logits_.mean(dim=-1)
+                    logits = (logits + local_logits_) / 2
+                    #gl_probs = torch.softmax(100 * gl_logits, dim=-1)
                 preds = logits.argmax(1)
                 all_preds.append(preds.cpu())
                 all_labels.append(batch['label'])
