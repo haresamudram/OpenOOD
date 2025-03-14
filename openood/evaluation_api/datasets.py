@@ -273,15 +273,15 @@ DATA_INFO = {
                 'benchmark_imglist/imagenet/val_openimage_o.txt'
             },
             'near': {
-                'datasets': ['ssb_hard', 'ninco'],
+                'datasets': ['ninco', 'ssb_hard'],
+                'ninco': {
+                    'data_dir': 'images_largescale/',
+                    'imglist_path': 'benchmark_imglist/imagenet/test_ninco.txt'
+                },
                 'ssb_hard': {
                     'data_dir': 'images_largescale/',
                     'imglist_path':
                     'benchmark_imglist/imagenet/test_ssb_hard.txt'
-                },
-                'ninco': {
-                    'data_dir': 'images_largescale/',
-                    'imglist_path': 'benchmark_imglist/imagenet/test_ninco.txt'
                 }
             },
             'far': {

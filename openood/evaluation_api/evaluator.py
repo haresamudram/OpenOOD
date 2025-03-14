@@ -18,6 +18,8 @@ from .datasets import DATA_INFO, data_setup, get_id_ood_dataloader
 from .postprocessor import get_postprocessor
 from .preprocessor import get_default_preprocessor
 import openood.gallop.vlprompt.tools as vlp_tools
+from openood.inferencing_class import CustomImageDataset
+from torchvision import transforms
 
 class Evaluator:
     def __init__(
@@ -184,8 +186,7 @@ class Evaluator:
                 if self.model == 'GalLoP':
                     local_logits_ = vlp_tools.topk_reduce(local_logits, topk=self.net.topk)
                     local_logits_ = local_logits_.mean(dim=-1)
-                    logits = (logits + local_logits_) / 2
-                    #gl_probs = torch.softmax(100 * gl_logits, dim=-1)
+                    logits = (local_logits_ + logits)/2
                 preds = logits.argmax(1)
                 all_preds.append(preds.cpu())
                 all_labels.append(batch['label'])
@@ -258,7 +259,11 @@ class Evaluator:
         task = 'ood' if not fsood else 'fsood'
         if self.metrics[task] is None:
             self.net.eval()
-
+            
+            # id accuracy
+            if self.metrics[f'{id_name}_acc'] is None:
+                self.eval_acc(id_name)
+            
             # id score
             if self.scores['id']['test'] is None:
                 print(f'Performing inference on {self.id_name} test set...',
@@ -268,6 +273,7 @@ class Evaluator:
                 self.scores['id']['test'] = [id_pred, id_conf, id_gt]
             else:
                 id_pred, id_conf, id_gt = self.scores['id']['test']
+            
 
             if fsood:
                 csid_pred, csid_conf, csid_gt = [], [], []
@@ -307,8 +313,7 @@ class Evaluator:
                                          ood_split='far',
                                          progress=progress)
 
-            if self.metrics[f'{id_name}_acc'] is None:
-                self.eval_acc(id_name)
+
             near_metrics[:, -1] = np.array([self.metrics[f'{id_name}_acc']] *
                                            len(near_metrics))
             far_metrics[:, -1] = np.array([self.metrics[f'{id_name}_acc']] *
@@ -332,6 +337,7 @@ class Evaluator:
 
         return self.metrics[task]
 
+    
     def _eval_ood(self,
                   id_list: List[np.ndarray],
                   ood_split: str = 'near',
