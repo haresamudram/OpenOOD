@@ -32,13 +32,13 @@ class BasePostprocessor:
                           disable=not progress or not comm.is_main_process()):
             data = batch['data'].cuda()
             label = batch['label'].cuda()
-            if 23 in label.cpu():
-                print('Batch with bald eagle')
-            if 352 in label.cpu():
-                print('Batch with hartebeest')
-            if 353 in label.cpu():
-                print('Batch with impala')
-            pred, conf = self.postprocess(net, data)
+            # if 23 in label.cpu():
+            #     print('Batch with bald eagle')
+            # if 352 in label.cpu():
+            #     print('Batch with hartebeest')
+            # if 353 in label.cpu():
+            #     print('Batch with impala')
+            pred, conf = self.postprocess(net, data, flag=False)
 
             pred_list.append(pred.cpu())
             conf_list.append(conf.cpu())

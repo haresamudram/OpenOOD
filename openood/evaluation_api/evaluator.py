@@ -181,12 +181,13 @@ class Evaluator:
         with torch.no_grad():
             for batch in tqdm(data_loader, desc=msg, disable=not progress):
                 data = batch['data'].cuda()
-                try :logits, local_logits = self.net(data)
+                try :logits, local_logits, visual_logits, mask = self.net(data)
                 except : logits = self.net(data)  
                 if self.model == 'GalLoP':
-                    local_logits_ = vlp_tools.topk_reduce(local_logits, topk=self.net.topk)
-                    local_logits_ = local_logits_.mean(dim=-1)
-                    logits = (local_logits_ + logits)/2
+                    #local_logits_ = vlp_tools.topk_reduce(local_logits, topk=self.net.topk)
+                    #local_logits_ = local_logits_.mean(dim=-1) # GalLoP
+                    #logits = (local_logits_ + logits)/2
+                    logits = visual_logits
                 preds = logits.argmax(1)
                 all_preds.append(preds.cpu())
                 all_labels.append(batch['label'])
@@ -261,8 +262,8 @@ class Evaluator:
             self.net.eval()
             
             # id accuracy
-            if self.metrics[f'{id_name}_acc'] is None:
-                self.eval_acc(id_name)
+            # if self.metrics[f'{id_name}_acc'] is None:
+            #     self.eval_acc(id_name)
             
             # id score
             if self.scores['id']['test'] is None:
